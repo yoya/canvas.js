@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="">
+    <title> rotate </title>
+    <style>
+      .borderRed { border: thick solid #F66; }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div id="controller">
+        <button type="button" @click="onClickReset"> 初期化 </button>
+        trans1x: <input type="range" v-model="trans1x" @input="onInput" min="0" max="100" value="50"/>:{{ trans1x }}
+        trans1y: <input type="range" v-model="trans1y" @input="onInput" min="0" max="100" value="50"/>:{{ trans1y }}
+        <br />
+        rotate: <input type="range" v-model="rotate" @input="onInput" min="0" max="360" value="0" />:{{ rotate }}
+        <br />
+        trans2y: <input type="range" v-model="trans2x" @input="onInput" min="0" max="100" value="50%"/>:{{ trans2x }}
+        trans2x: <input type="range" v-model="trans2y" @input="onInput" min="0" max="100" value="50%"/>:{{ trans2y }}
+      </div>
+      <div id="canvasContainer">
+        <canvas id="canvas" width="512" height="512" class="borderRed"> </canvas>
+      </div>
+    </div>
+    <script src="./dist/vue.min.js"></script>
+    <script src="./rotate.js"></script>
+  </body>
+</html>
+  
+
