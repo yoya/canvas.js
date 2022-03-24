@@ -59,9 +59,6 @@ let vm = new Vue({
             ctx.strokeText("ABC...", trans1x, trans1y);
         }
     },
-    created: function() {
-        console.log("created");
-    },
     mounted : function() {
         this._reset();
         this._drawCanvas();
