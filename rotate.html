@@ -11,13 +11,14 @@
     <div id="app">
       <div id="controller">
         <button type="button" @click="onClickReset"> 初期化 </button>
-        trans1x: <input type="range" v-model="trans1x" @input="onInput" min="0" max="100" value="50"/>:{{ trans1x }}
-        trans1y: <input type="range" v-model="trans1y" @input="onInput" min="0" max="100" value="50"/>:{{ trans1y }}
+        rotate: <input type="range" v-model="rotate" @input="onInput" min="0" max="360" value="0" />:{{ rotate }}degree
+        transSync:<input type="checkbox" v-model="transSync" @change="onChange" checked>
         <br />
-        rotate: <input type="range" v-model="rotate" @input="onInput" min="0" max="360" value="0" />:{{ rotate }}
+        trans1x: <input type="range" v-model="trans1x" @input="onInputTrans1" min="0" max="100" value="50"/>:{{ trans1x }}%
+        trans1y: <input type="range" v-model="trans1y" @input="onInputTrans1" min="0" max="100" value="50"/>:{{ trans1y }}%
         <br />
-        trans2y: <input type="range" v-model="trans2x" @input="onInput" min="0" max="100" value="50%"/>:{{ trans2x }}
-        trans2x: <input type="range" v-model="trans2y" @input="onInput" min="0" max="100" value="50%"/>:{{ trans2y }}
+        trans2y: <input type="range" v-model="trans2x" @input="onInputTrans2" min="0" max="100" value="50%"/>:{{ trans2x }}%
+        trans2x: <input type="range" v-model="trans2y" @input="onInputTrans2" min="0" max="100" value="50%"/>:{{ trans2y }}%
       </div>
       <div id="canvasContainer">
         <canvas id="canvas" width="512" height="512" class="borderRed"> </canvas>

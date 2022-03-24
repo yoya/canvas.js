@@ -3,16 +3,34 @@
 let vm = new Vue({
     el: '#app',
     data: {
-        trans1x: 0, trans1y: 0,
         rotate: 0,
+        transSync: true,
+        trans1x: 0, trans1y: 0,
         trans2x: 0, trans2y: 0,
     },
     methods: {
+        onClickReset: function() {
+            this._reset();
+        },
         onInput: function() {
             this._drawCanvas();
         },
-        onClickReset: function() {
-            this._reset();
+        onChange: function() {
+            this._drawCanvas();
+        },
+        onInputTrans1: function() {
+            if (this.transSync) {
+                this.trans2x = this.trans1x;
+                this.trans2y = this.trans1y;
+            }
+            this._drawCanvas();
+        },
+        onInputTrans2: function() {
+            if (this.transSync) {
+                this.trans1x = this.trans2x;
+                this.trans1y = this.trans2y;
+            }
+            this._drawCanvas();
         },
         //  user function
         _reset : function() {
@@ -24,23 +42,21 @@ let vm = new Vue({
             this.trans2y = 50;
         },
         _drawCanvas : function() {
-            let {trans1x, trans1y, rotate, trans2x, trans2y} = this;
+            let {rotate, trans1x, trans1y, trans2x, trans2y} = this;
             const canvas = document.getElementById("canvas");
             const ctx = canvas.getContext("2d");
             const {width, height} = canvas;
             canvas.width = width;
+            rotate = parseInt(rotate, 10) * Math.PI/180;
             trans1x = parseInt(trans1x, 10) * width / 100;
-            trans1y =  parseInt(trans1y, 10) * height / 100;
-            rotate = parseInt(rotate,  10) * Math.PI/180;
-            trans2x = parseInt(trans2x,  10) * width / 100;
+            trans1y = parseInt(trans1y, 10) * height / 100;
+            trans2x = parseInt(trans2x, 10) * width / 100;
             trans2y = parseInt(trans2y, 10) * height / 100;
-
             ctx.translate(trans1x, trans1y);
             ctx.rotate(rotate);
             ctx.translate(-trans2x, -trans2y);
-             ctx.font = "64px serif";
+            ctx.font = "64px serif";
             ctx.strokeText("ABC...", trans1x, trans1y);
-            console.log("trans1x, trans1y:", trans1x, trans1y, "rotate:", rotate,"trans2x, trans2y", trans2x, trans2y)
         }
     },
     created: function() {
