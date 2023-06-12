@@ -8,12 +8,14 @@ let vm = new Vue({
         image: new Image(),
         canvas: null,
         imageDataEx: null,
-        cutpathLength: 100,
-        lineLength:290,
-        opaqueW:0, opaqueH:0,
-        dstX:0, dstY:0,
-        grabX: 0,
-        grabY: 0,
+        cutpathLength: 128,
+        //
+        lineLength: 290,  // 台座の繋ぎの長さ
+        imageScale: 1.0,  // 入力画像のスケール調整
+        //
+        opaqueW: 0,  opaqueH: 0,  // 入力画像の不透明部のサイズ
+        dstX: 0,  dstY: 0,  // 画像を canvas の何処に貼るか
+        grabX: 0,  grabY: 0,  // ボタンを押したマウスの最終位置
     },
     methods: {
         clamp(x, a, b) {
@@ -29,53 +31,110 @@ let vm = new Vue({
             }
             reader.readAsDataURL(file);
         },
-        opaqueScan(imageData, dx, dy) { //透明でない部分を探す
+        opaqueScan(imageData, dx, dy, len) { //透明でない部分を探す
             const { width, height, data } = imageData;
-            let v;
+            let v, alpha = 10;
+            let xcenter = 0, ycenter = 0;
             if (dx > 0) {
-                v = width;
                 for (let x = 0; x < width; x++) {
+                    let m = false; // 前のピクセルが不透明
+                    let l = 0;
+                    let lmax = 0;
                     for (let y = 0; y < height; y++) {
                         const o = 4 * (x + y * width) + 3;
-                        if (data[o] > 127) {
-                            return x;
+                        if (data[o] < alpha) {
+                            m  = false;
+                            l = 0;
+                        } else {
+                            m = true;
+                            l = (m)? (l+1): 1;
+                        }
+                        if (lmax < l) {
+                            lmax = l;
+                            ycenter = y - l/2;
                         }
                     }
+                    if (len <= lmax) {
+                        return [x, ycenter];
+                    }
                 }
+                v = width;
             } else if (dx < 0) {
-                v = 0;
                 for (let x = width - 1; x >= 0; x--) {
+                    let m = false; // 前のピクセルが不透明
+                    let l = 0;
+                    let lmax = 0;
                     for (let y = 0; y < height; y++) {
                         const o = 4 * (x + y * width) + 3;
-                        if (data[o] > 127) {
-                            return x;
+                        if (data[o] < alpha) {
+                            m  = false;
+                            l = 0;
+                        } else {
+                            m = true;
+                            l = (m)? (l+1): 1;
+                        }
+                        if (lmax < l) {
+                            lmax = l;
+                            ycenter = y - l/2;
                         }
                     }
-                }
-            } else if (dy > 0) {
-                v = height;
-                for (let y = 0; y < height; y++) {
-                    for (let x = 0; x < width; x++) {
-                        const o = 4 * (x + y * width) + 3;
-                        if (data[o] > 127) {
-                            return y;
-                        }
+                    if (len <= lmax) {
+                        return [x, ycenter];
                     }
                 }
-            } else if (dy < 0) {
                 v = 0;
-                for (let y = height - 1; y >= 0; y--) {
+            } else if (dy > 0) {
+                for (let y = 0; y < height; y++) {
+                    let m = false; // 前のピクセルが不透明
+                    let l = 0;
+                    let lmax = 0;
                     for (let x = 0; x < width; x++) {
                         const o = 4 * (x + y * width) + 3;
-                        if (data[o] > 1) {
-                            return y;
+                        if (data[o] < alpha) {
+                            m  = false;
+                            l = 0;
+                        } else {
+                            m = true;
+                            l = (m)? (l+1): 1;
+                        }
+                        if (lmax < l) {
+                            lmax = l;
+                            xcenter = x - l/2;
                         }
                     }
+                    if (len <= lmax) {
+                        return [xcenter, y];
+                    }
                 }
+                v = height;
+            } else if (dy < 0) {
+                for (let y = height - 1; y >= 0; y--) {
+                    let m = false; // 前のピクセルが不透明
+                    let l = 0;
+                    let lmax = 0;
+                    for (let x = 0; x < width; x++) {
+                        const o = 4 * (x + y * width) + 3;
+                        if (data[o] < alpha) {
+                            m  = false;
+                            l = 0;
+                        } else {
+                            m = true;
+                            l = (m)? (l+1): 1;
+                        }
+                        if (lmax < l) {
+                            lmax = l;
+                            xcenter = x - l/2;
+                        }
+                    }
+                    if (len <= lmax) {
+                        return [xcenter, y];
+                    }
+                }
+                v = 0;
             } else {
                 console.error("opaqueScan:", {dx, dy});
             }
-            return v;
+            return [v, 0, 0];
         },
         cropImageData(imageData, x, y, w, h) {
             const { width, height, data } = imageData;
@@ -91,18 +150,23 @@ let vm = new Vue({
         },
         opaqueImageData(imageData) { //透明でない部分の画像
             const { width, height, data } = imageData;
-            const oX = this.opaqueScan(imageData, 1, 0);
-            const oY = this.opaqueScan(imageData, 0, 1);
-            const oX2 = this.opaqueScan(imageData, -1, 0);
-            const oY2 = this.opaqueScan(imageData, 0, -1);
+            // opaqueScan imageData, dx, dy, len
+            const [oX] = this.opaqueScan(imageData, 1, 0, 1);
+            const [dummyX, oY] = this.opaqueScan(imageData, 0, 1, 1);
+            const [oX2] = this.opaqueScan(imageData, -1, 0, 1);
+            const [dummyX2, oY2] = this.opaqueScan(imageData, 0, -1, 1);
             const oW = oX2 - oX;
             const oH = oY2 - oY;
             const oImageData = this.cropImageData(imageData, oX, oY, oW, oH);
             return oImageData;
         },
-        onLoadImage(e) {
-            const { canvas, image } = this;
-            const { width, height } = image;
+        onLoadImage() {
+            const { image } = this;
+            const width  = Math.min(Math.round(image.width  * this.imageScale),
+                                    this.canvas.width);
+            const height = Math.min(Math.round(image.height * this.imageScale),
+                                    this.canvas.height);
+            const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext("2d");
@@ -144,18 +208,56 @@ let vm = new Vue({
         onInput(e) {
             this.update();
         },
+        onInputImage(e) {
+            this.onLoadImage();
+            this.onInput(e);
+        },
+        rainbowGradient(x1, y1, x2, y2, loop) {
+            const { canvas } = this;
+            const ctx = canvas.getContext("2d");            
+            const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+            const rainbowColors = ["red", "orange", "yellow", "green", "cyan", "bl\
+ue", "violet"];
+            const n = rainbowColors.length;
+            for (let i = 0 ; i < n*loop; i += 1) {
+                const c = rainbowColors[i%n]
+                grad.addColorStop(i/(n*loop), c);
+            }
+            return grad;
+        },
         update: function() {
-            const { canvas, image, lineLength } = this;
+            const { canvas, image, imageData, lineLength } = this;
             const { opaqueW, opaqueH } = this;
             const { dstX, dstY } = this;
             const { width, height } = canvas;
-            canvas.width = width;  // clear
+            canvas.width = width;  // all clear
+            // 画像貼り付け
             const ctx = canvas.getContext("2d");
-            ctx.putImageData(this.imageData, dstX, dstY, 0, 0,
+            ctx.putImageData(imageData, dstX, dstY, 0, 0,
                              opaqueW, opaqueH);
-            ctx.fillStyle = "black";
-            ctx.rect((width - lineLength) / 2, height - 4, lineLength, 4);
+            // レインボー色設定
+            ctx.fillStyle = this.rainbowGradient(0, 0, width, height, 10);
+            ctx.strokeStyle = ctx.fillStyle;
+            // 台座のりしろ
+            const footX = (width - lineLength) / 2;
+            ctx.rect(footX, height - 4, lineLength, 4);
             ctx.fill();
+            // 画像側ののりしろ
+            const [matteX, matteY] = this.opaqueScan(imageData, 0, -1, lineLength);
+            const [mX, mY] = [dstX + matteX, dstY + matteY];
+            ctx.rect(mX - lineLength / 2, mY - 1, lineLength, 3);
+            ctx.fill();
+            //
+            ctx.beginPath();
+            ctx.lineWidth = 10;
+            // 左の支え
+            ctx.moveTo(mX - lineLength / 2, mY);
+            ctx.lineTo(footX, height);
+            // 右の支え
+            ctx.moveTo(mX + lineLength / 2, mY);
+            ctx.lineTo(footX + lineLength, height);
+            ctx.stroke();
+            console.log({matteX, matteY});
         },
     },
     mounted : function() {
