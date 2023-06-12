@@ -10,11 +10,13 @@
   <body>
     <div id="app" @dragover.prevent @drop.prevent="dropFile">
       <div id="controller">
-        lineLength: <input type="range" v-model="lineLength" @input="onInput" min="128" max="512" step="1" />:{{ lineLength }}px
         imageScale: <input type="range" v-model="imageScale" @input="onInputImage" min="0.1" max="2.0" step="0.01" />:{{ imageScale }}
       </div>
       <div id="canvasContainer">
         <canvas id="canvas" width="900" height="900" class="borderRed" @mousedown="onMousedown" @mousemove="onMousemove" @mouseleave="onMouseleave"> no canvas </canvas>
+      </div>
+      <div id="controller2">
+        lineLength: <input type="range" v-model="lineLength" @input="onInput" min="128" max="512" step="1" />:{{ lineLength }}px
       </div>
     </div>
     <script type="module" src="./dist/vue.min.js"></script>
