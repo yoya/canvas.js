@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" href="">
+    <title> linescane </title>
+    <style>
+      .borderRed { border: thick solid #F66; }
+    </style>
+  </head>
+  <body>
+    <div id="app" @dragover.prevent @drop.prevent="dropFile">
+      <div id="controller">
+        line Length: <input type="range" v-model="lineLength" @input="onInput" min="128" max="512"/>:{{ lineLength }}px
+      </div>
+      <div id="canvasContainer">
+        <canvas id="canvas" width="900" height="900" class="borderRed" @mousedown="onMousedown" @mousemove="onMousemove" @mouseleave="onMouseleave"> no canvas </canvas>
+      </div>
+    </div>
+    <script type="module" src="./dist/vue.min.js"></script>
+    <script type="module" src="./linescan.js"></script>
+  </body>
+</html>
