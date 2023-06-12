@@ -7,7 +7,6 @@ let vm = new Vue({
     data: {
         image: new Image(),
         canvas: null,
-        imageData: null,
         imageDataEx: null, // 後でこっちに移す
         cutpathLength: 128, // px
         cutpathMargin: 30, // px
@@ -33,135 +32,6 @@ let vm = new Vue({
             }
             reader.readAsDataURL(file);
         },
-        opaqueScan(imageData, dx, dy, len) { //透明でない部分を探す
-            const { width, height, data } = imageData;
-            let v, alpha = 10;
-            let xcenter = 0, ycenter = 0;
-            if (dx > 0) {
-                for (let x = 0; x < width; x++) {
-                    let m = false; // 前のピクセルが不透明
-                    let l = 0;
-                    let lmax = 0;
-                    for (let y = 0; y < height; y++) {
-                        const o = 4 * (x + y * width) + 3;
-                        if (data[o] < alpha) {
-                            m  = false;
-                            l = 0;
-                        } else {
-                            m = true;
-                            l = (m)? (l+1): 1;
-                        }
-                        if (lmax < l) {
-                            lmax = l;
-                            ycenter = y - l/2;
-                        }
-                    }
-                    if (len <= lmax) {
-                        return [x, ycenter];
-                    }
-                }
-                v = width;
-            } else if (dx < 0) {
-                for (let x = width - 1; x >= 0; x--) {
-                    let m = false; // 前のピクセルが不透明
-                    let l = 0;
-                    let lmax = 0;
-                    for (let y = 0; y < height; y++) {
-                        const o = 4 * (x + y * width) + 3;
-                        if (data[o] < alpha) {
-                            m  = false;
-                            l = 0;
-                        } else {
-                            m = true;
-                            l = (m)? (l+1): 1;
-                        }
-                        if (lmax < l) {
-                            lmax = l;
-                            ycenter = y - l/2;
-                        }
-                    }
-                    if (len <= lmax) {
-                        return [x, ycenter];
-                    }
-                }
-                v = 0;
-            } else if (dy > 0) {
-                for (let y = 0; y < height; y++) {
-                    let m = false; // 前のピクセルが不透明
-                    let l = 0;
-                    let lmax = 0;
-                    for (let x = 0; x < width; x++) {
-                        const o = 4 * (x + y * width) + 3;
-                        if (data[o] < alpha) {
-                            m  = false;
-                            l = 0;
-                        } else {
-                            m = true;
-                            l = (m)? (l+1): 1;
-                        }
-                        if (lmax < l) {
-                            lmax = l;
-                            xcenter = x - l/2;
-                        }
-                    }
-                    if (len <= lmax) {
-                        return [xcenter, y];
-                    }
-                }
-                v = height;
-            } else if (dy < 0) {
-                for (let y = height - 1; y >= 0; y--) {
-                    let m = false; // 前のピクセルが不透明
-                    let l = 0;
-                    let lmax = 0;
-                    for (let x = 0; x < width; x++) {
-                        const o = 4 * (x + y * width) + 3;
-                        if (data[o] < alpha) {
-                            m  = false;
-                            l = 0;
-                        } else {
-                            m = true;
-                            l = (m)? (l+1): 1;
-                        }
-                        if (lmax < l) {
-                            lmax = l;
-                            xcenter = x - l/2;
-                        }
-                    }
-                    if (len <= lmax) {
-                        return [xcenter, y];
-                    }
-                }
-                v = 0;
-            } else {
-                console.error("opaqueScan:", {dx, dy});
-            }
-            return [v, 0, 0];
-        },
-        cropImageData(imageData, x, y, w, h) {
-            const { width, height, data } = imageData;
-            const line = width * 4;
-            const cImageData = new ImageData(w, h);
-            const cData = cImageData.data;
-            const cLine = w * 4;
-            for (let y2  = 0; y2 < h; y2++) {
-                const yOff = 4 * x + (y + y2) * line;
-                cData.set(data.subarray(yOff, yOff + cLine), y2  * cLine);
-            }
-            return cImageData;
-        },
-        opaqueImageData(imageData) { //透明でない部分の画像
-            const { width, height, data } = imageData;
-            // opaqueScan imageData, dx, dy, len
-            const [oX] = this.opaqueScan(imageData, 1, 0, 1);
-            const [dummyX, oY] = this.opaqueScan(imageData, 0, 1, 1);
-            const [oX2] = this.opaqueScan(imageData, -1, 0, 1);
-            const [dummyX2, oY2] = this.opaqueScan(imageData, 0, -1, 1);
-            const oW = oX2 - oX;
-            const oH = oY2 - oY;
-            const oImageData = this.cropImageData(imageData, oX, oY, oW, oH);
-            return oImageData;
-        },
         onLoadImage() {
             const { image } = this;
             const imageScale = Number(this.imageScale);
@@ -175,8 +45,9 @@ let vm = new Vue({
             const ctx = canvas.getContext("2d");
             ctx.drawImage(image, 0, 0, width, height);
             const imageData = ctx.getImageData(0, 0, width, height);
-            const opaqueImageData = this.opaqueImageData(imageData);
-            this.imageData = opaqueImageData;
+            const imageDataEx = new ImageDataEx(imageData);
+            const opaqueImageData = imageDataEx.opaqueImageData();
+            this.imageDataEx = opaqueImageData;
             this.opaqueW = opaqueImageData.width;
             this.opaqueH =  opaqueImageData.height;
             this.dstX = (width - this.opaqueW) / 2;
@@ -229,7 +100,7 @@ ue", "violet"];
             return grad;
         },
         update: function() {
-            const { canvas, image, imageData } = this;
+            const { canvas, image, imageDataEx } = this;
             const lineLength = Number(this.lineLength);
             const { opaqueW, opaqueH } = this;
             const { dstX, dstY } = this;
@@ -237,7 +108,7 @@ ue", "violet"];
             canvas.width = width;  // all clear
             // 画像貼り付け
             const ctx = canvas.getContext("2d");
-            ctx.putImageData(imageData, dstX, dstY, 0, 0,
+            ctx.putImageData(imageDataEx.toImageData(), dstX, dstY, 0, 0,
                              opaqueW, opaqueH);
             // レインボー色設定
             ctx.fillStyle = this.rainbowGradient(0, 0, width, height, 10);
@@ -247,7 +118,7 @@ ue", "violet"];
             ctx.rect(footX, height - 4, lineLength, 4);
             ctx.fill();
             // 画像側ののりしろ
-            const [matteX, matteY] = this.opaqueScan(imageData, 0, -1, lineLength);
+            const [matteX, matteY] = imageDataEx.opaqueScan(0, -1, lineLength);
             const [mX, mY] = [dstX + matteX, dstY + matteY];
             ctx.rect(mX - lineLength / 2, mY - 1, lineLength, 3);
             ctx.fill();
