@@ -254,18 +254,23 @@ ue", "violet"];
             //
             ctx.beginPath();
             ctx.lineWidth = 10;
-            // 左の支え
-            ctx.moveTo(mX - lineLength / 2, mY);
-            ctx.lineTo(footX, height);
-            ctx.closePath();
+            const left = {
+                x1: mX - lineLength / 2, y1: mY,
+                y2: (mY + height) / 2,
+                x3: footX, y3: height,
+            };
+            ctx.moveTo(left.x1, left.y1);
+            ctx.bezierCurveTo(left.x1, left.y2, left.x3, left.y2, left.x3, left.y3)
             ctx.stroke();
             // 右の支え
-            ctx.moveTo(mX + lineLength / 2, mY);
-            console.log({footX, lineLength, height});
-            ctx.lineTo(footX + lineLength, height);
-            ctx.closePath();
+            const right = {
+                x1: mX + lineLength / 2,  y1: mY,
+                y2: (mY + height) / 2,
+                x3:footX + lineLength, y3: height,
+            };
+            ctx.moveTo(right.x1, right.y1);
+            ctx.bezierCurveTo(right.x1, right.y2, right.x3, right.y2, right.x3, right.y3)
             ctx.stroke();
-            console.log({matteX, matteY});
         },
     },
     mounted : function() {
