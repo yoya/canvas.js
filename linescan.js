@@ -7,8 +7,10 @@ let vm = new Vue({
     data: {
         image: new Image(),
         canvas: null,
-        imageDataEx: null,
-        cutpathLength: 128,
+        imageData: null,
+        imageDataEx: null, // 後でこっちに移す
+        cutpathLength: 128, // px
+        cutpathMargin: 30, // px
         //
         lineLength: 290,  // 台座の繋ぎの長さ
         imageScale: 1.0,  // 入力画像のスケール調整
@@ -162,10 +164,11 @@ let vm = new Vue({
         },
         onLoadImage() {
             const { image } = this;
-            const width  = Math.min(Math.round(image.width  * this.imageScale),
-                                    this.canvas.width);
-            const height = Math.min(Math.round(image.height * this.imageScale),
-                                    this.canvas.height);
+            const imageScale = Number(this.imageScale);
+            const width  = Math.min(Math.round(image.width  * imageScale),
+                                    this.canvas.width - (this.cutpathMargin * 2));
+            const height = Math.min(Math.round(image.height * imageScale),
+                                    this.canvas.height - (this.cutpathMargin * 2));
             const canvas = document.createElement("canvas");
             canvas.width = width;
             canvas.height = height;
@@ -226,7 +229,8 @@ ue", "violet"];
             return grad;
         },
         update: function() {
-            const { canvas, image, imageData, lineLength } = this;
+            const { canvas, image, imageData } = this;
+            const lineLength = Number(this.lineLength);
             const { opaqueW, opaqueH } = this;
             const { dstX, dstY } = this;
             const { width, height } = canvas;
@@ -253,9 +257,13 @@ ue", "violet"];
             // 左の支え
             ctx.moveTo(mX - lineLength / 2, mY);
             ctx.lineTo(footX, height);
+            ctx.closePath();
+            ctx.stroke();
             // 右の支え
             ctx.moveTo(mX + lineLength / 2, mY);
+            console.log({footX, lineLength, height});
             ctx.lineTo(footX + lineLength, height);
+            ctx.closePath();
             ctx.stroke();
             console.log({matteX, matteY});
         },
