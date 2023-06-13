@@ -42,10 +42,10 @@ export class ImageDataProc {
             this.l = 0;
             this.lmax = 0;
             this.center = 0;
-            this.scan = function(posi, opaque) {
+            this.scan = function(posi, cond) {
                 const { m, lmax } = this;
                 let { l } =  this;
-                if (opaque) {
+                if (cond) {
                     l = (m)? (l+1): 1;
                     this.m = true;
                 } else {
