@@ -1,0 +1,57 @@
+<html>
+  <style>
+    canvas {
+        max-width:45%;
+    }
+  </style>
+  <body>
+    <canvas> </canvas>
+    <canvas> </canvas>
+    <script>
+      const image = new Image();
+      const cancelEvent = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      };
+      const dropEvent = async (e) => {
+          const file = e.dataTransfer.files[0];
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          await new Promise(resolve => reader.onload = () => resolve());
+          const url = reader.result;
+          const image = new Image();
+          image.src = url;
+          await new Promise(resolve => image.onload = () => resolve());
+          const canvas = document.querySelector('canvas');
+          const ctx = canvas.getContext('2d');
+          const { width, height } = image;
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(image, 0, 0, width, height);
+      }
+      document.addEventListener("dragover" , cancelEvent, false);
+      document.addEventListener("dragenter", cancelEvent, false);
+      document.addEventListener("drop", async function(e) {
+          cancelEvent(e);
+          await dropEvent(e);
+          const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
+          copyImage(srcCanvas, dstCanvas);
+      }, false);
+      const copyImage = (srcCanvas, dstCanvas) => {
+          const { width , height } = srcCanvas;
+          dstCanvas.width = width;
+          dstCanvas.height = height;
+          const srcCtx = srcCanvas.getContext('2d');
+          const dstCtx = dstCanvas.getContext('2d');
+          const srcImageData = srcCtx.getImageData(0, 0, width, height);
+          const dstImageData = new ImageData(width, height);
+          // dstImageData.data.set(srcImageData.data); // copy array all
+          for (let i = 0; i < width * height; i++) {
+              const [r,g,b,a] = srcImageData.data.subarray(i*4, i*4 + 4);
+              dstImageData.data.set([r,g,b,a], i*4);
+          }
+          dstCtx.putImageData(dstImageData, 0, 0);
+      }
+    </script>
+  </body>
+</html>
