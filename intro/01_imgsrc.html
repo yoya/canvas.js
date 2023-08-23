@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <canvas> </canvas>
+    <script>
+      const image = new Image();
+      image.src = "fujisan.jpg";
+      image.onload = (e) => {
+          const canvas = document.querySelector('canvas');
+          const ctx = canvas.getContext('2d');
+          const { width, height } = image;
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(image, 0, 0, width, height);
+      }
+    </script>
+  </body>
+</html>
