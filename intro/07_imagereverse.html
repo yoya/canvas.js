@@ -7,40 +7,13 @@
   <body>
     <canvas> </canvas>
     <canvas> </canvas>
+    <script src="lib/imageinput.js"> </script>
     <script>
-      let image = new Image();
-      image.onload = () => {
-          const canvas = document.querySelector('canvas');
-          const ctx = canvas.getContext('2d');
-          const { width, height } = image;
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(image, 0, 0, width, height);
-          const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
-          copyImage(srcCanvas, dstCanvas);
-      }
-      image.src = "fujisan.jpg";
-      const cancelEvent = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      };
-      const dropEvent = async (e) => {
-          const file = e.dataTransfer.files[0];
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          await new Promise(resolve => reader.onload = () => resolve());
-          const url = reader.result;
-          image.src = url;
-      }
-      document.addEventListener("dragover" , cancelEvent, false);
-      document.addEventListener("dragenter", cancelEvent, false);
-      document.addEventListener("drop", async function(e) {
-          cancelEvent(e);
-          await dropEvent(e);
-          const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
-          copyImage(srcCanvas, dstCanvas);
-      }, false);
-      const copyImage = (srcCanvas, dstCanvas) => {
+      const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
+      imageinput(srcCanvas, (image) => {
+          reverseImage(srcCanvas, dstCanvas);
+      });
+      const reverseImage = (srcCanvas, dstCanvas) => {
           const { width , height } = srcCanvas;
           dstCanvas.width = width;
           dstCanvas.height = height;
