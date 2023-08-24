@@ -21,8 +21,10 @@
           const dstCtx = dstCanvas.getContext('2d');
           const srcImageData = srcCtx.getImageData(0, 0, width, height);
           const dstImageData = new ImageData(width, height);
-          // dstImageData.data.set(srcImageData.data.reverse()); // copy array all
-          // new Uint32Array(dstImageData.data.buffer).set((new Uint32Array(srcImageData.data.buffer)).reverse()); // copy array all
+          // dstImageData.data.set(srcImageData.data.reverse()); // NG
+          // const srcData32 = new Uint32Array(srcImageData.data.buffer)
+          // const dstData32 = new Uint32Array(dstImageData.data.buffer);
+          // dstData32.set(srcData32.reverse()); // copy array all
           for (let i = 0; i < width * height; i++) {
               let rgba = srcImageData.data.subarray(i*4, i*4 + 4);
               dstImageData.data.set(rgba, (width * height - i - 1)*4);
