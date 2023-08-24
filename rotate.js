@@ -53,6 +53,8 @@ let vm = new Vue({
             trans2x = parseInt(trans2x, 10) * width / 100;
             trans2y = parseInt(trans2y, 10) * height / 100;
             ctx.translate(trans1x, trans1y);
+//            ctx.arc(0, 0, 5, 0, 2*Math.PI);
+//            ctx.stroke();
             ctx.rotate(rotate);
             ctx.translate(-trans2x, -trans2y);
             ctx.font = "64px serif";
