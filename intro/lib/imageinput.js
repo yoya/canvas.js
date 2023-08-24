@@ -16,16 +16,16 @@ function imageinput(canvas, callback) {
         e.stopPropagation();
     };
     const dropEvent = async (e) => {
-    const file = e.dataTransfer.files[0];
-    const reader = new FileReader();
-          reader.readAsDataURL(file);
-          await new Promise(resolve => reader.onload = () => resolve());
-          image.src = reader.result;
-      }
-      document.addEventListener("dragover" , cancelEvent, false);
-      document.addEventListener("dragenter", cancelEvent, false);
-      document.addEventListener("drop", async function(e) {
-          cancelEvent(e);
-          await dropEvent(e);
-      }, false);
+        const file = e.dataTransfer.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        await new Promise(resolve => reader.onload = () => resolve());
+        image.src = reader.result;
+    }
+    document.addEventListener("dragover" , cancelEvent, false);
+    document.addEventListener("dragenter", cancelEvent, false);
+    document.addEventListener("drop", async function(e) {
+        cancelEvent(e);
+        await dropEvent(e);
+    }, false);
 }
