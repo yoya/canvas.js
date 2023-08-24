@@ -10,7 +10,7 @@ function imageinput(canvas, callback) {
         ctx.drawImage(image, 0, 0, width, height);
         callback(image);
     }
-    image.src = "fujisan.jpg";
+    image.src = "img/fujisan.jpg";
     const cancelEvent = (e) => {
         e.preventDefault();
         e.stopPropagation();
