@@ -9,10 +9,14 @@
     <script>
       const image = new Image();
       document.addEventListener("paste", async function(e) {
-          e.preventDefault();
+//          e.preventDefault();
           //e.stopPropagation();
           const contents = await navigator.clipboard.read();
           const item = contents[0];
+          if (! item.types.includes("image/png")) {
+              console.warn("Clipboard contains non-image data.");
+              return ;
+          }
           const blob = await item.getType("image/png");
           const url = URL.createObjectURL(blob);
           const image = new Image();

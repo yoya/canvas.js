@@ -30,12 +30,12 @@ function imageinput(canvas, callback) {
         e.preventDefault();
         const contents = await navigator.clipboard.read();
         const item = contents[0];
-        if (item.types.includes("image/png")) {
-            const blob = await item.getType("image/png");
-            image.src = URL.createObjectURL(blob);
-            await image.decode();
-        } else {
+        if (! item.types.includes("image/png")) {
             console.warn("Clipboard contains non-image data.");
+            return ;
         }
+        const blob = await item.getType("image/png");
+        image.src = URL.createObjectURL(blob);
+        await image.decode();
     }, false);
 }
