@@ -8,17 +8,13 @@
     <canvas> </canvas>
     <script>
       const image = new Image();
-      document.addEventListener("dragover", (e) => {
-          e.preventDefault();
-      }, false);
-      document.addEventListener("drop", async function(e) {
+      document.addEventListener("paste", async function(e) {
           e.preventDefault();
           //e.stopPropagation();
-          const file = e.dataTransfer.files[0];
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          await new Promise(resolve => reader.onload = () => resolve());
-          const url = reader.result;
+          const contents = await navigator.clipboard.read();
+          const item = contents[0];
+          const blob = await item.getType("image/png");
+          const url = URL.createObjectURL(blob);
           const image = new Image();
           image.src = url;
           //await new Promise(resolve => image.onload = () => resolve());

@@ -3,14 +3,12 @@
     <canvas> </canvas>
     <script>
       const image = new Image();
-      const cancelEvent = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      };
-      document.addEventListener("dragover" , cancelEvent, false);
-      document.addEventListener("dragenter", cancelEvent, false);
+      document.addEventListener("dragover", (e) => {
+          e.preventDefault();
+      }, false);
       document.addEventListener("drop", function(e) {
-          cancelEvent(e);
+          e.preventDefault();
+          //e.stopPropagation();
           const file = e.dataTransfer.files[0];
           const reader = new FileReader();
           reader.readAsDataURL(file);
