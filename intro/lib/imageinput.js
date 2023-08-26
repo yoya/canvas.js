@@ -11,10 +11,6 @@ function imageinput(canvas, callback) {
         callback(image);
     }
     image.src = "img/fujisan.jpg";
-    const cancelEvent = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-    };
     const dropEvent = async (e) => {
         const file = e.dataTransfer.files[0];
         const reader = new FileReader();
@@ -22,10 +18,24 @@ function imageinput(canvas, callback) {
         await new Promise(resolve => reader.onload = () => resolve());
         image.src = reader.result;
     }
-    document.addEventListener("dragover" , cancelEvent, false);
-    document.addEventListener("dragenter", cancelEvent, false);
+    document.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    }, false);
     document.addEventListener("drop", async function(e) {
-        cancelEvent(e);
+        e.preventDefault();
+        //e.stopPropagation();
         await dropEvent(e);
+    }, false);
+    document.addEventListener("paste", async function(e) {
+        e.preventDefault();
+        const contents = await navigator.clipboard.read();
+        const item = contents[0];
+        if (item.types.includes("image/png")) {
+            const blob = await item.getType("image/png");
+            image.src = URL.createObjectURL(blob);
+            await image.decode();
+        } else {
+            console.warn("Clipboard contains non-image data.");
+        }
     }, false);
 }
