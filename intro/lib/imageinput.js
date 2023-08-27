@@ -11,20 +11,18 @@ function imageinput(canvas, callback) {
         callback(image);
     }
     image.src = "img/fujisan.jpg";
-    const dropEvent = async (e) => {
-        const file = e.dataTransfer.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        await new Promise(resolve => reader.onload = () => resolve());
-        image.src = reader.result;
-    }
     document.addEventListener("dragover", (e) => {
         e.preventDefault();
     }, false);
     document.addEventListener("drop", async function(e) {
         e.preventDefault();
         //e.stopPropagation();
-        await dropEvent(e);
+        const file = e.dataTransfer.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        await new Promise(resolve => reader.onload = () => resolve());
+        image.src = reader.result;
+        await image.decode();
     }, false);
     document.addEventListener("paste", async function(e) {
         e.preventDefault();
