@@ -5,8 +5,7 @@ function imageinput(canvas, callback) {
     image.onload = () => {
         const ctx = canvas.getContext('2d');
         const { width, height } = image;
-        canvas.width = width;
-        canvas.height = height;
+        Object.assign(canvas, { width, height });
         ctx.drawImage(image, 0, 0, width, height);
         callback(image);
     }

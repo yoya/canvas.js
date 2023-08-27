@@ -9,7 +9,7 @@
     <script>
       const image = new Image();
       document.addEventListener("paste", async function(e) {
-//          e.preventDefault();
+          //e.preventDefault();
           //e.stopPropagation();
           const contents = await navigator.clipboard.read();
           const item = contents[0];
@@ -26,8 +26,7 @@
           const canvas = document.querySelector('canvas');
           const ctx = canvas.getContext('2d');
           const { width, height } = image;
-          canvas.width = width;
-          canvas.height = height;
+          Object.assign(canvas, { width, height });
           ctx.drawImage(image, 0, 0, width, height);
       }, false);
     </script>

@@ -15,8 +15,7 @@
       });
       const copyImage = (srcCanvas, dstCanvas) => {
           const { width , height } = srcCanvas;
-          dstCanvas.width = width;
-          dstCanvas.height = height;
+          Object.assign(dstCanvas, { width, height });
           const srcCtx = srcCanvas.getContext('2d');
           const dstCtx = dstCanvas.getContext('2d');
           const srcImageData = srcCtx.getImageData(0, 0, width, height);
