@@ -9,23 +9,23 @@
     <canvas> </canvas>
     <script src="lib/imageinput.js"> </script>
     <script>
-      const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
-      imageinput(srcCanvas, (image) => {
-          copyImage(srcCanvas, dstCanvas);
+      const [canvas1, canvas2] = document.querySelectorAll('canvas');
+      imageinput(canvas1, () => {
+          copyImage(canvas1, canvas2);
       });
-      const copyImage = (srcCanvas, dstCanvas) => {
-          const { width , height } = srcCanvas;
-          Object.assign(dstCanvas, { width, height });
-          const srcCtx = srcCanvas.getContext('2d');
-          const dstCtx = dstCanvas.getContext('2d');
-          const srcImageData = srcCtx.getImageData(0, 0, width, height);
-          const dstImageData = new ImageData(width, height);
-          // dstImageData.data.set(srcImageData.data); // copy array all
+      const copyImage = (canvas1, canvas2) => {
+          const { width , height } = canvas1;
+          Object.assign(canvas2, { width, height });
+          const ctx1 = canvas1.getContext('2d');
+          const ctx2 = canvas2.getContext('2d');
+          const imageData1 = ctx1.getImageData(0, 0, width, height);
+          const imageData2 = new ImageData(width, height);
+          // imageData2.data.set(imageData1.data); // copy array all
           for (let i = 0; i < width * height; i++) {
-              const rgba = srcImageData.data.subarray(i*4, i*4 + 4);
-              dstImageData.data.set(rgba, i*4);
+              const rgba = imageData1.data.subarray(i*4, i*4 + 4);
+              imageData2.data.set(rgba, i*4);
           }
-          dstCtx.putImageData(dstImageData, 0, 0);
+          ctx2.putImageData(imageData2, 0, 0);
       }
     </script>
   </body>

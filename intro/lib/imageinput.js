@@ -7,7 +7,7 @@ function imageinput(canvas, callback) {
         const { width, height } = image;
         Object.assign(canvas, { width, height });
         ctx.drawImage(image, 0, 0, width, height);
-        callback(image);
+        callback();
     }
     image.src = "img/fujisan.jpg";
     document.addEventListener("dragover", (e) => {

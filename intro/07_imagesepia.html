@@ -9,27 +9,27 @@
     <canvas> </canvas>
     <script src="lib/imageinput.js"> </script>
     <script>
-      const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
-      imageinput(srcCanvas, (image) => {
-          sepiaImage(srcCanvas, dstCanvas);
+      const [canvas1, canvas2] = document.querySelectorAll('canvas');
+      imageinput(canvas1, () => {
+          sepiaImage(canvas1, canvas2);
       });
-      const sepiaImage = (srcCanvas, dstCanvas) => {
-          const { width , height } = srcCanvas;
-          Object.assign(dstCanvas, { width, height });
-          const srcCtx = srcCanvas.getContext('2d');
-          const dstCtx = dstCanvas.getContext('2d');
-          const srcImageData = srcCtx.getImageData(0, 0, width, height);
-          const dstImageData = new ImageData(width, height);
-          // dstImageData.data.set(srcImageData.data); // copy array all
+      const sepiaImage = (canvas1, canvas2) => {
+          const { width , height } = canvas1;
+          Object.assign(canvas2, { width, height });
+          const ctx1 = canvas1.getContext('2d');
+          const ctx2 = canvas2.getContext('2d');
+          const imageData1 = ctx1.getImageData(0, 0, width, height);
+          const imageData2 = new ImageData(width, height);
+          // imageData2.data.set(imageData1.data); // copy array all
           for (let i = 0; i < width * height; i++) {
-              const [r, g, b, a] = srcImageData.data.subarray(i*4, i*4 + 4);
+              const [r, g, b, a] = imageData1.data.subarray(i*4, i*4 + 4);
               // CSS sepia coefficient                              
               const rr = r * 0.393 + g * 0.769 + b * 0.189;
               const gg = r * 0.349 + g * 0.686 + b * 0.168;
               const bb = r * 0.272 + g * 0.534 + b * 0.131;
-              dstImageData.data.set([rr, gg, bb, a], i*4);
+              imageData2.data.set([rr, gg, bb, a], i*4);
           }
-          dstCtx.putImageData(dstImageData, 0, 0);
+          ctx2.putImageData(imageData2, 0, 0);
       }
     </script>
   </body>

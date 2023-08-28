@@ -9,26 +9,26 @@
     <canvas> </canvas>
     <script src="lib/imageinput.js"> </script>
     <script>
-      const [srcCanvas, dstCanvas] = document.querySelectorAll('canvas');
-      imageinput(srcCanvas, (image) => {
-          reverseImage(srcCanvas, dstCanvas);
+      const [canvas1, canvas2] = document.querySelectorAll('canvas');
+      imageinput(canvas1, (image) => {
+          reverseImage(canvas1, canvas2);
       });
-      const reverseImage = (srcCanvas, dstCanvas) => {
-          const { width , height } = srcCanvas;
-          Object.assign(dstCanvas, { width, height });
-          const srcCtx = srcCanvas.getContext('2d');
-          const dstCtx = dstCanvas.getContext('2d');
-          const srcImageData = srcCtx.getImageData(0, 0, width, height);
-          const dstImageData = new ImageData(width, height);
-          // dstImageData.data.set(srcImageData.data.reverse()); // NG
-          // const srcData32 = new Uint32Array(srcImageData.data.buffer)
-          // const dstData32 = new Uint32Array(dstImageData.data.buffer);
+      const reverseImage = (canvas1, canvas2) => {
+          const { width , height } = canvas1;
+          Object.assign(canvas2, { width, height });
+          const ctx1 = canvas1.getContext('2d');
+          const ctx2 = canvas2.getContext('2d');
+          const imageData1 = ctx1.getImageData(0, 0, width, height);
+          const imagaData2 = new ImageData(width, height);
+          // imagaData2.data.set(imageData1.data.reverse()); // NG
+          // const srcData32 = new Uint32Array(imageData1.data.buffer)
+          // const dstData32 = new Uint32Array(imagaData2.data.buffer);
           // dstData32.set(srcData32.reverse()); // copy array all
           for (let i = 0; i < width * height; i++) {
-              let rgba = srcImageData.data.subarray(i*4, i*4 + 4);
-              dstImageData.data.set(rgba, (width * height - i - 1)*4);
+              const rgba = imageData1.data.subarray(i*4, i*4 + 4);
+              imagaData2.data.set(rgba, (width * height - i - 1)*4);
           }
-          dstCtx.putImageData(dstImageData, 0, 0);
+          ctx2.putImageData(imagaData2, 0, 0);
       }
     </script>
   </body>
