@@ -1,7 +1,7 @@
 "use strict";
 
 function imageinput(canvas, callback) {
-    let image = new Image();
+    const image = new Image();
     image.onload = () => {
         const ctx = canvas.getContext('2d');
         const { width, height } = image;
