@@ -72,7 +72,7 @@ createApp({
         }
         onMounted(() => {
             canvas = canvasRef.value;
-            image.src = "img/l_kutsu_200826inochi01.jpg";
+            image.src = "img/ExEObmoVEAUVuxM.jpg";
         });
         const onAspect = (e) => {
             console.log(e.target.selectedOptions);
