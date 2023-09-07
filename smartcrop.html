@@ -1,18 +1,41 @@
 <html>
   <head>
     <style>
-      
-      canvas {
-          width: calc(100% - 500px - 2px); /* border 分 2px 減らす*/
-          border: 1px dashed gray;
+      .container {
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+      }
+      .controller {
           vertical-align: top;
+          width: 400px;
+          border: 1px solid blue;
+          padding: 1em;
+          border-radius: 0.5em;
+      }
+      canvas {
+          /* min-width: 256px;*/
+          width: auto;
+          border: 1px dashed gray;
       }
     </style>
   </head>
   <body>
     <div id="app">
-      <div class="container" @dragover.prevent @drop.prevent="dropFile">
+      <div class="container" @dragover.prevent @drop.prevent="onDrop">
+        <div>
         <canvas ref="canvasRef" width="512" height="512"> </canvas>
+        </div>
+        <div class="controller">
+          <select name="aspect" size="5" multiple @change="onAspect" v-model="aspects">
+            <option value="1:1" selected> 1:1 (square) </option>
+            <option value="4:3"         > 4:3 (SDTV)  </option>
+            <option value="16:9"        > 16:9 (HDTV) </option>
+            <option value="3:4"         > 3:4         </option>
+            <option value="9:16"        > 9:16        </option>
+          </select>
+          <div id="result"> </div>
+        </div>
       </div>
     </div>
     <script type="module" src="dist/smartcrop.js"> </script>
