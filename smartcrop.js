@@ -55,8 +55,12 @@ function makeCanvasAutoCrop(canvas, image, aspects) {
                                  topCrop.width, topCrop.height ];
         ctx.clearRect(x, y, w, h, x, y, w, h);
         ctx.drawImage(image, x, y, w, h, x, y, w, h);
-        const tc = JSON.stringify(topCrop, null , "    ");
-        resultText.innerHTML = "<pre><code>" + tc + "</code></pre>";
+        //
+        const tcall = "smartcrop.crop(image, { width: "+ aspectW +", height: "+ aspectH +" })";
+        callText.innerHTML = "<pre><code>" + tcall + "</code></pre>";
+        
+        const tcrop = JSON.stringify(topCrop, null , "    ");
+        resultText.innerHTML = "<pre><code>" + tcrop + "</code></pre>";
     });
 }
 
