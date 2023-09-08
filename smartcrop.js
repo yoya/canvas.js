@@ -31,7 +31,6 @@ function makeCanvasAutoCrop(canvas, image, aspects) {
     const ctx = canvas.getContext("2d");
     ctx.drawImage(image, 0, 0, width, height);
     makeCanvasCheckboard(canvas);
-    console.log(aspects);
     let aspectW = 100, aspectH = 100;
     switch (aspects[0]) {
     case "1:1":
@@ -56,18 +55,23 @@ function makeCanvasAutoCrop(canvas, image, aspects) {
                                  topCrop.width, topCrop.height ];
         ctx.clearRect(x, y, w, h, x, y, w, h);
         ctx.drawImage(image, x, y, w, h, x, y, w, h);
-        const tc = JSON.stringify(topCrop);
-        result.innerText = tc;
+        const tc = JSON.stringify(topCrop, null , "    ");
+        resultText.innerHTML = "<pre><code>" + tc + "</code></pre>";
     });
 }
 
 createApp({
     setup() {
         const canvasRef = ref();
-        const aspects = ref();
+        const filename = ref("img/ExEObmoVEAUVuxM.jpg");
+        const aspects = ref("1:1");
+        const width = ref();
+        const height = ref();
         let canvas;
         const image = new Image();
         image.onload = () => {
+            width.value = image.width;
+            height.value = image.height;
             makeCanvasAutoCrop(canvas, image, {0:"1:1"});
         }
         onMounted(() => {
@@ -75,9 +79,12 @@ createApp({
             image.src = "img/ExEObmoVEAUVuxM.jpg";
         });
         const onAspect = (e) => {
-            console.log(e.target.selectedOptions);
             const opts = Array.from(e.target.selectedOptions).map((e) => e.value);
             makeCanvasAutoCrop(canvas, image, aspects.value);
+        }
+        const onFile = async (e) => {
+            const url = e.target.value;
+            image.src = url;
         }
         const onDrop = async (e) => {
             const file = e.dataTransfer.files[0];
@@ -85,10 +92,11 @@ createApp({
             reader.readAsDataURL(file);
             await new Promise( resolve => reader.onload = () => resolve());
             image.src = reader.result;
+            filename.value = "";
         }
         return {
-            canvasRef, aspects,
-            onDrop, onAspect,
+            canvasRef, width, height, aspects, filename,
+            onAspect, onFile, onDrop,
         }
     }
 }).mount('#app')

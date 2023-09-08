@@ -1,21 +1,28 @@
 <html>
   <head>
     <style>
+      div {
+          margin: 8px;
+      }
       .container {
           display: flex;
           flex-direction: row;
       }
       canvas {
-          min-width: 128px;
-          max-width: 512px;
+          width: 512px;
           border: 1px dashed gray;
       }
       .controller {
           vertical-align: top;
           width: 400px;
           border: 1px solid blue;
-          padding: 1em;
           border-radius: 0.5em;
+      }
+      .resultContainer {
+          border: 2px solid green;
+          border-radius: 1em;
+          color: #4FA;
+          background-color: black;
       }
     </style>
   </head>
@@ -26,14 +33,31 @@
           <canvas ref="canvasRef" width="512" height="512"> </canvas>
         </div>
         <div class="controller">
-          <select name="aspect" size="5" multiple @change="onAspect" v-model="aspects">
-            <option value="1:1" selected> 1:1 (square) </option>
-            <option value="4:3"         > 4:3 (SDTV)  </option>
-            <option value="16:9"        > 16:9 (HDTV) </option>
-            <option value="3:4"         > 3:4         </option>
-            <option value="9:16"        > 9:16        </option>
-          </select>
-          <div id="result"> </div>
+          <div>
+            <div> width:{{width}}, height:{{height}}  </div>
+            <span> Image File </span> <br />
+            <select size="3" @change="onFile" v-model="filename">
+              <option value="img/ExEObmoVEAUVuxM.jpg" selected> EkiRoudou </option>
+              <option value="img/l_kutsu_200826inochi01.jpg"  > InochiKagayaki </option>
+              <option value="img/CMDCWjUUYAARMpy.png"> MaIiyaNeyou </option>
+            </select>
+          </div>
+          <div>
+            <span> Aspect Ratio </span> <br />
+            <select size="5" multiple @change="onAspect" v-model="aspects">
+              <option value="1:1" selected> 1:1 (square) </option>
+              <option value="4:3"         > 4:3 (SDTV)  </option>
+              <option value="16:9"        > 16:9 (HDTV) </option>
+              <option value="3:4"         > 3:4         </option>
+              <option value="9:16"        > 9:16        </option>
+            </select>
+          </div>
+          <div>
+            <div> Crop Result </div>
+            <div class="resultContainer">
+              <span id="resultText"> ... </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
