@@ -1,0 +1,36 @@
+<html>
+  <style>
+    canvas {
+        max-width:45%;
+    }
+  </style>
+  <body>
+    <canvas> </canvas>
+    <button> Download </button>
+    <script src="lib/imageinput.js"> </script>
+    <script>
+      const [canvas] = document.querySelectorAll('canvas');
+      imageinput(canvas, () => {
+          ;
+      }, "img/Opaopa.png");
+      const [button] = document.querySelectorAll('button');
+      button.addEventListener("click", () => {
+          contentType = 'image/png';
+          // const dataURL = canvas.toDataURL(contentType);
+          canvas.toBlob( function(blob) {  // PNG download
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.style.display = 'none';
+              a.download = "image.png"
+              a.href = url;
+              document.body.appendChild(a);
+              a.click();
+              setTimeout(() => {
+                  document.body.removeChild(a);
+                  window.URL.revokeObjectURL(url);
+              }, 100);
+          }, contentType);
+      });
+    </script>
+  </body>
+</html>
