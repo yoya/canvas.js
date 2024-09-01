@@ -8,7 +8,7 @@ const IMAGE_COMP_IDX_ALPHA = 3;
 
 export class ImageDataProc {
     constructor() { ; }
-    getPlanceData(compIdx) {
+    getPlaneData(compIdx) {
         if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
             throw new exception("wrong image comp type:", this.compType);
         }
@@ -132,7 +132,7 @@ export class ImageDataProc {
         return oImageData;
     }
     getAlphaData() {
-        return this.getPlanceData(IMAGE_COMP_ALPHA);
+        return this.getPlaneData(IMAGE_COMP_ALPHA);
     }
     trimImage() {
         ;
