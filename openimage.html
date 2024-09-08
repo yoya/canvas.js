@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="copyright" content="&copy; 2024/09/08- yoya@awm.jp . All Rights Reserved.">
+    <link rel="shortcut icon" href="">
+    <title> openimage </title>
+    <style>
+      .borderRed { border: thick solid #F66; }
+    </style>
+  </head>
+  <body>
+    <div id="app" @dragover.prevent @drop.prevent="dropFile">
+      <div id="controller">
+        openCount: <input type="range" v-model="openCount" @input="onInputImage" min="1" max="8" step="1" />:{{ openCount }}
+      </div>
+      <div id="canvasContainer">
+        <canvas id="canvas" width="512" height="512" class="borderRed" > no canvas </canvas>
+      </div>
+    </div>
+    <!-- script src="https://unpkg.com/vue@2"> </script -->
+    <script type="module" src="./dist/vue.min.js"></script>
+    <script type="module" src="./openimage.js"></script>
+  </body>
+</html>
