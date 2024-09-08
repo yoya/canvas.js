@@ -169,8 +169,9 @@ export class ImageDataProc {
                     for (let xx = w1; xx < w2; xx++) {
                         const k = kernel[--ko];
                         if (k > 0.5) {
-                            if (pixel < data[off]) {
-                                pixel = data[xx + yy * width];
+                            const pixel_k = data[xx + yy * width];
+                            if (pixel < pixel_k) {
+                                pixel = pixel_k;
                             }
                         }
                     }
