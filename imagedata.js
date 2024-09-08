@@ -134,6 +134,59 @@ export class ImageDataProc {
     getAlphaData() {
         return this.getPlaneData(IMAGE_COMP_ALPHA);
     }
+    openImageData(kernel, kernelWidth, count) {
+        // console.debug("openImageData", {kernel, kernelWidth, count})
+        let imageData = this;
+        for (let i = 0; i < count; i++) {
+            imageData = imageData.erodeImageData(kernel, kernelWidth);
+        }
+        for (let i = 0; i < count; i++) {
+            imageData = imageData.dilateImageData(kernel, kernelWidth);
+        }
+        return imageData;
+    }
+    erodeImageData(kernel, kernelWidth) {
+        if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+            throw new Error("wrong image comp type:", this.compType);
+        }
+        const { width, height, data } = this;
+        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
+        const imageData = new ImageDataEx(width, height, opts);
+        const data2 = 0;
+        const kw1 = Math.floor(kernelWidth / 2);
+        const kw2 = kernelWidth - kw1;
+        let off = 0;
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                let pixel = 0
+                // カーネル処理
+                let ko = kernel.length;
+                const h1 = Math.max(0, y - kw1);
+                const h2 = Math.min(height, y + kw2);
+                for (let yy = h1; yy < h2; yy++) {
+                    const w1 = Math.max(0, x - kw1);
+                    const w2 = Math.min(width, x + kw2);
+                    for (let xx = w1; xx < w2; xx++) {
+                        const k = kernel[--ko];
+                        if (k > 0.5) {
+                            if (pixel < data[off]) {
+                                pixel = data[xx + yy * width];
+                            }
+                        }
+                    }
+                }
+                imageData.data[off++] = pixel;
+            }
+        }
+        return imageData;
+    }
+    dilateImageData(kernel, kernelWidth) {
+        return this;
+        const { width, height, data } = this;
+        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
+        const imageData = new ImageDataEx(width, height, opts);
+        return imageData;
+    }
     trimImage() {
         ;
     }
