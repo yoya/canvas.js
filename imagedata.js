@@ -169,13 +169,13 @@ export class ImageDataProc {
     erodeKernelFunction(x1, x2, y1, y2, kernel, kernelWidth) {
         const { width, data } = this;
         let ko = kernel.length;
-        let pixel = 0;
+        let pixel = 255;
         for (let y = y1; y < y2; y++) {
             for (let x = x1; x < x2; x++) {
                 const k = kernel[--ko];
                 if (k > 0.5) {
                     const pixel_k = data[x + y * width];
-                    if (pixel < pixel_k) {
+                    if (pixel > pixel_k) {
                         pixel = pixel_k;
                     }
                 }
@@ -194,13 +194,13 @@ export class ImageDataProc {
     dilateKernelFunction(x1, x2, y1, y2, kernel, kernelWidth) {
         const { width, data } = this;
         let ko = kernel.length;
-        let pixel = 255;
+        let pixel = 0;
         for (let y = y1; y < y2; y++) {
             for (let x = x1; x < x2; x++) {
                 const k = kernel[--ko];
                 if (k > 0.5) {
                     const pixel_k = data[x + y * width];
-                    if (pixel > pixel_k) {
+                    if (pixel < pixel_k) {
                         pixel = pixel_k;
                     }
                 }
