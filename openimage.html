@@ -11,7 +11,9 @@
   <body>
     <div id="app" @dragover.prevent @drop.prevent="dropFile">
       <div id="controller">
-        openCount: <input type="range" v-model="openCount" @input="onInputImage" min="1" max="8" step="1" />:{{ openCount }}
+        openCount:
+        <input type="range" v-model="openCount" @input="onInputImage" min="0" max="12"/>
+        <input type="number" v-model="openCount" @input="onInputImage" min="0" max="12"/>
       </div>
       <div id="canvasContainer">
         <canvas id="canvas" width="512" height="512" class="borderRed" > no canvas </canvas>
