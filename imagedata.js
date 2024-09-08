@@ -145,11 +145,8 @@ export class ImageDataProc {
         }
         return imageData;
     }
-    erodeImageData(kernel, kernelWidth) {
-        if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
-            throw new Error("wrong image comp type:", this.compType);
-        }
-        const { width, height, data } = this;
+    applyKernelImageData(kernelFunction, kernel, kernelWidth) {
+        const { width, height } = this;
         const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
         const imageData = new ImageDataEx(width, height, opts);
         const data2 = 0;
@@ -158,34 +155,65 @@ export class ImageDataProc {
         let off = 0;
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-                let pixel = 0
-                // カーネル処理
-                let ko = kernel.length;
-                const h1 = Math.max(0, y - kw1);
-                const h2 = Math.min(height, y + kw2);
-                for (let yy = h1; yy < h2; yy++) {
-                    const w1 = Math.max(0, x - kw1);
-                    const w2 = Math.min(width, x + kw2);
-                    for (let xx = w1; xx < w2; xx++) {
-                        const k = kernel[--ko];
-                        if (k > 0.5) {
-                            const pixel_k = data[xx + yy * width];
-                            if (pixel < pixel_k) {
-                                pixel = pixel_k;
-                            }
-                        }
-                    }
-                }
+                const x1 = Math.max(0, x - kw1);
+                const x2 = Math.min(width, x + kw2);
+                const y1 = Math.max(0, y - kw1);
+                const y2 = Math.min(height, y + kw2);
+                const pixel = kernelFunction(x1, x2, y1, y2,
+                                             kernel, kernelWidth)
                 imageData.data[off++] = pixel;
             }
         }
         return imageData;
     }
+    erodeKernelFunction(x1, x2, y1, y2, kernel, kernelWidth) {
+        const { width, data } = this;
+        let ko = kernel.length;
+        let pixel = 0;
+        for (let y = y1; y < y2; y++) {
+            for (let x = x1; x < x2; x++) {
+                const k = kernel[--ko];
+                if (k > 0.5) {
+                    const pixel_k = data[x + y * width];
+                    if (pixel < pixel_k) {
+                        pixel = pixel_k;
+                    }
+                }
+            }
+        }
+        return pixel;
+    }
+    erodeImageData(kernel, kernelWidth) {
+        if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+            throw new Error("wrong image comp type:", this.compType);
+        }
+        const imageData = this.applyKernelImageData(this.erodeKernelFunction.bind(this),
+                                                    kernel, kernelWidth);
+        return imageData;
+    }
+    dilateKernelFunction(x1, x2, y1, y2, kernel, kernelWidth) {
+        const { width, data } = this;
+        let ko = kernel.length;
+        let pixel = 255;
+        for (let y = y1; y < y2; y++) {
+            for (let x = x1; x < x2; x++) {
+                const k = kernel[--ko];
+                if (k > 0.5) {
+                    const pixel_k = data[x + y * width];
+                    if (pixel > pixel_k) {
+                        pixel = pixel_k;
+                    }
+                }
+            }
+        }
+        return pixel;
+    }
     dilateImageData(kernel, kernelWidth) {
-        return this;
-        const { width, height, data } = this;
-        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
-        const imageData = new ImageDataEx(width, height, opts);
+        if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+            throw new Error("wrong image comp type:", this.compType);
+        }
+        const imageData = this.applyKernelImageData(this.dilateKernelFunction.bind(this),
+                                                    kernel, kernelWidth);
         return imageData;
     }
     trimImage() {
