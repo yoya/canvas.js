@@ -2,7 +2,7 @@
 
 import { ImageDataEx, ImageDataProc } from './imagedata.js';
 
-let vm = new Vue({
+new Vue({
     el: '#app',
     data: {
         image: new Image(),

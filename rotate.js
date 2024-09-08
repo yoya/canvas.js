@@ -1,6 +1,6 @@
 "use strict";
 
-let vm = new Vue({
+new Vue({
     el: '#app',
     data: {
         rotate: 0,
@@ -11,6 +11,7 @@ let vm = new Vue({
     methods: {
         onClickReset: function() {
             this._reset();
+            this._drawCanvas();
         },
         onInput: function() {
             this._drawCanvas();
