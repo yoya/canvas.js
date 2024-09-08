@@ -1,4 +1,4 @@
-const IMAGE_COMP_TYPE_GRAYSCALE = 1;
+export const IMAGE_COMP_TYPE_GRAYSCALE = 1;
 const IMAGE_COMP_TYPE_RGBA = 4;
 
 const IMAGE_COMP_IDX_RED = 0;
@@ -184,10 +184,46 @@ export class  ImageDataEx extends ImageDataProc {
         } break;
         }
     }
+    grayscale() {
+        const { compType, data, width, height } = this;
+        if (compType === IMAGE_COMP_TYPE_GRAYSCALE) {
+            console.warn("already grayscale image");
+            return ;
+        }
+        if (compType !== IMAGE_COMP_TYPE_RGBA) {
+            throw new Error("wrong image comp type:", {compType});
+        }
+        const n = width * height;
+        this.data = new Uint8ClampedArray(n);
+        for (let i=0, j=0; i < n; i++, j+=4) {
+            const v = (2*data[j] + 5*data[j+1] + data[j+2]) / 8;
+            this.data[i] = v;
+        }
+        this.compType = IMAGE_COMP_TYPE_GRAYSCALE;
+        return this;
+    }
     toImageData() {
-        const { width, height, data } = this;
+        const { width, height, data ,compType } = this;
+        // console.debug("toImageData", { width, height, data ,compType });
         const imageData = new ImageData(width, height);
-        imageData.data.set(data);
+        switch (compType) {
+        case IMAGE_COMP_TYPE_GRAYSCALE: {  // single channe image data
+            const samples = width * height;
+            let o = 0
+            for (let i = 0; i < samples; i++) {
+                imageData.data[o++] = data[i];
+                imageData.data[o++] = data[i];
+                imageData.data[o++] = data[i];
+                imageData.data[o++] = 255;
+            }
+        } break;
+        case IMAGE_COMP_TYPE_RGBA: {  // 4-channels image data
+            imageData.data.set(data);
+        } break;
+        default: {
+            throw new Error("wrong compType:" + compType);
+        } break;
+        }
         return imageData;
     }
 }
