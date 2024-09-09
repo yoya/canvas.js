@@ -6,6 +6,8 @@ const IMAGE_COMP_IDX_GREEN = 1;
 const IMAGE_COMP_IDX_BLUE = 2;
 const IMAGE_COMP_IDX_ALPHA = 3;
 
+export const IMAGE_KERNEL_TYPE_DISK = 1
+
 export class ImageDataProc {
     constructor() { ; }
     getPlaneData(compIdx) {
@@ -144,6 +146,27 @@ export class ImageDataProc {
             imageData = imageData.dilateImageData(kernel, kernelWidth);
         }
         return imageData;
+    }
+    makeKernel(kernelType, kernelWidth) {
+        switch (kernelType) {
+        case IMAGE_KERNEL_TYPE_DISK: {
+            const rho = 4.3;
+            const center = Math.floor((kernelWidth - 1) /  2);
+            //
+        } break;
+        }
+        return [ 0, 1, 0,
+                 1, 1, 1,
+                 0, 1, 0 ];
+    }
+    getKernelImageData(kernel, kernelWidth) {
+        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
+        const imageDataEx = new ImageDataEx(kernelWidth, kernelWidth, opts);
+        const n = kernel.length;
+        for (let i = 0; i < n; i++) {
+            imageDataEx.data[i] = (kernel[i] > 0.5)? 255: 0;
+        }
+        return imageDataEx;
     }
     applyKernelImageData(kernelFunction, kernel, kernelWidth) {
         const { width, height } = this;
