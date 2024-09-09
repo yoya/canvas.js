@@ -136,6 +136,23 @@ export class ImageDataProc {
     getAlphaData() {
         return this.getPlaneData(IMAGE_COMP_ALPHA);
     }
+    resize(resizeWidth, resizeHeight) {
+        const { compType, width, height, data } = this;
+        if (compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+            throw new Error("wrong image comp type:", compType);
+        }
+        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
+        const imageDataEx = new ImageDataEx(resizeWidth, resizeHeight, opts);
+        for (let ry = 0; ry < resizeHeight; ry++) {
+            const y = Math.floor(ry * height / resizeHeight);
+            for (let rx = 0; rx < resizeWidth; rx++) {
+                const x = Math.floor(rx * width / resizeWidth);
+                imageDataEx.data[rx + resizeWidth * ry] = data[x + width * y];
+                // imageDataEx.data[rx + resizeWidth * ry] = 127;
+            }
+        }
+        Object.assign(this, imageDataEx);
+    }
     openImageData(kernel, kernelWidth, count) {
         // console.debug("openImageData", {kernel, kernelWidth, count})
         let imageData = this;
