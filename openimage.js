@@ -3,17 +3,19 @@
  * (c) 2024/09/08- yoya@awm.jp . All Rights Reserved.
  */
 
-import { ImageDataEx, ImageDataProc, IMAGE_COMP_TYPE_GRAYSCALE } from './imagedata.js';
+import { ImageDataEx, ImageDataProc, IMAGE_COMP_TYPE_GRAYSCALE, IMAGE_KERNEL_TYPE_DISK } from './imagedata.js';
 
 // ImageDataProc 要らないかも？
 
 new Vue({
     el: '#app',
     data: {
-        canvas: document.createElement("canvas"),
+        openCanvas: document.getElementById("openCanvas"),
+        kernelCanvas: document.getElementById("kernelCanvas"),
         image: new Image(),
         imageDataEx: null, // 後でこっちに移す
         openCount: 1,
+        kernelWidth: 3,
     },
     methods: {
         clamp(x, a, b) {
@@ -30,16 +32,15 @@ new Vue({
             reader.readAsDataURL(file);
         },
         onLoadImage() {
-            const { image, canvas } = this;
+            const { image, openCanvas } = this;
             const { width, height } = image;
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext("2d");
+            openCanvas.width = width;
+            openCanvas.height = height;
+            const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             ctx.drawImage(image, 0, 0, width, height);
             const imageData = ctx.getImageData(0, 0, width, height);
             const imageDataEx = new ImageDataEx(imageData).grayscale();
             this.imageDataEx = imageDataEx;
-            imageDataEx.grayscale();
             this.update();
         },
         onInput(e) {
@@ -50,26 +51,28 @@ new Vue({
             this.onInput(e);
         },
         update: function() {
-            const { canvas, image, imageDataEx } = this;
+            const { openCanvas, image, imageDataEx } = this;
+            const { kernelCanvas, kernelWidth } = this;
             const { width, height } = imageDataEx;
-            const kernel = [ 0, 1, 0,
-                             1, 1, 1,
-                             0, 1, 0 ];
-            const kernelWidth = 3;
+            const kernel = imageDataEx.makeKernel(IMAGE_KERNEL_TYPE_DISK, 3);
             const ex = imageDataEx.openImageData(kernel, kernelWidth,
                                                  Number(this.openCount));
             const imageData = ex.toImageData();
-            // const imageData = imageDataEx.toImageData();
-            console.log({imageData});
-            const ctx = canvas.getContext("2d");
+            const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             ctx.putImageData(imageData, 0, 0);
+            // kernel描画
+            const kernelImageDataEx = imageDataEx.getKernelImageData(kernel, kernelWidth);
+            kernelImageDataEx.resize(kernelCanvas.width, kernelCanvas.height);
+            const kernelImageData = kernelImageDataEx.toImageData();
+            const kernelCtx = kernelCanvas.getContext("2d", { willReadFrequently: true });
+            kernelCtx.putImageData(kernelImageData, 0, 0);
         },
     },
     mounted : function() {
+        this.openCanvas = document.getElementById("openCanvas");
+        this.kernelCanvas = document.getElementById("kernelCanvas");
         const image = this.image;
-        this.canvas = document.getElementById("canvas");
-        image.onload = this.onLoadImage;
-        //        image.src = "img/CMYK.png";
+        image.onload = this.onLoadImage;1
         image.src = "img/rings_lg_orig.png";;
     },
 })

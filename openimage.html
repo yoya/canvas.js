@@ -6,17 +6,32 @@
     <title> openimage </title>
     <style>
       .borderRed { border: thick solid #F66; }
+      .borderBlue { border: thick solid #48F; }
+      .controllerElement { vertical-align: top }
     </style>
   </head>
   <body>
     <div id="app" @dragover.prevent @drop.prevent="dropFile">
-      <div id="controller">
-        openCount:
-        <input type="range" v-model="openCount" @input="onInputImage" min="0" max="12"/>
-        <input type="number" v-model="openCount" @input="onInputImage" min="0" max="12"/>
+      <div id="controller" style="display: flex;">
+        <div class="controllerElement">
+          <div>
+            openCount:
+          </div>
+          <div>
+          <input type="range" v-model="openCount" @input="onInputImage" min="0" max="12"/>
+          <input type="number" v-model="openCount" @input="onInputImage" min="0" max="12"/>
+          </div>
+        </div>
+        <div style="padding: 0.5em;">  </div>
+        <div class="controllerElement">
+          <span style="vertical-align: top">
+            kernel:
+          </span>
+          <canvas id="kernelCanvas" width="64" height="64" class="borderBlue" > no canvas </canvas>
+        </div>
       </div>
       <div id="canvasContainer">
-        <canvas id="canvas" width="512" height="512" class="borderRed" > no canvas </canvas>
+        <canvas id="openCanvas" width="512" height="512" class="borderRed" > no canvas </canvas>
       </div>
     </div>
     <!-- script src="https://unpkg.com/vue@2"> </script -->
