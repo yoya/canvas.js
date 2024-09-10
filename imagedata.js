@@ -12,7 +12,7 @@ export class ImageDataProc {
     constructor() { ; }
     getPlaneData(compIdx) {
         if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
-            throw new Error("wrong image comp type:", this.compType);
+            throw new Error("wrong image comp type:" + this.compType);
         }
         const { width, height, data } = this;
         const alphaImageData = new ImageDataEx(width, height, IMAGE_COMP_TYPE_GRAYSCALE);
@@ -154,7 +154,6 @@ export class ImageDataProc {
         Object.assign(this, imageDataEx);
     }
     openImageData(kernel, kernelWidth, count) {
-        // console.debug("openImageData", {kernel, kernelWidth, count})
         let imageData = this;
         for (let i = 0; i < count; i++) {
             imageData = imageData.erodeImageData(kernel, kernelWidth);
@@ -313,7 +312,7 @@ export class  ImageDataEx extends ImageDataProc {
             return ;
         }
         if (compType !== IMAGE_COMP_TYPE_RGBA) {
-            throw new Error("wrong image comp type:", {compType});
+            throw new Error("wrong image comp type:" + compType);
         }
         const n = width * height;
         this.data = new Uint8ClampedArray(n);
@@ -326,7 +325,6 @@ export class  ImageDataEx extends ImageDataProc {
     }
     toImageData() {
         const { width, height, data ,compType } = this;
-        // console.debug("toImageData", { width, height, data ,compType });
         const imageData = new ImageData(width, height);
         switch (compType) {
         case IMAGE_COMP_TYPE_GRAYSCALE: {  // single channe image data
