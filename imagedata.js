@@ -139,7 +139,7 @@ export class ImageDataProc {
     resize(resizeWidth, resizeHeight) {
         const { compType, width, height, data } = this;
         if (compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
-            throw new Error("wrong image comp type:", compType);
+            throw new Error("wrong image comp type:" + compType);
         }
         const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
         const imageDataEx = new ImageDataEx(resizeWidth, resizeHeight, opts);
@@ -225,7 +225,7 @@ export class ImageDataProc {
     }
     erodeImageData(kernel, kernelWidth) {
         if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
-            throw new Error("wrong image comp type:", this.compType);
+            throw new Error("wrong image comp type:" + this.compType);
         }
         const imageData = this.applyKernelImageData(this.erodeKernelFunction.bind(this),
                                                     kernel, kernelWidth);
