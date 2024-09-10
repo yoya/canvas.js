@@ -17,10 +17,10 @@ new Vue({
         imageDataEx: null,
         openImageDataEx: null,
         openImage: true,
-        openCount: "4",
+        openCount: "2",
         kernelWidth: "5",
         guideLine: true,
-        guideGap: 8,
+        guideGap: "8",
         guideColor: "#FF0000",
     },
     methods: {
@@ -81,7 +81,7 @@ new Vue({
         },
         drawGuideLine() {
             const { openCanvas, openImageDataEx } = this;
-            const { width, height } = openImageDataEx;
+            const { width, height } = openCanvas;
             const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             if (openImageDataEx) {
                 const imageData = openImageDataEx.toImageData();
