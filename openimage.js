@@ -15,8 +15,8 @@ new Vue({
         previewImage: null,
         image: new Image(),
         imageDataEx: null, // 後でこっちに移す
-        openCount: "1",
-        kernelWidth: "7",
+        openCount: "4",
+        kernelWidth: "5",
     },
     methods: {
         clamp(x, a, b) {
