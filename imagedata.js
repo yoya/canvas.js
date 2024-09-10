@@ -138,17 +138,40 @@ export class ImageDataProc {
     }
     resize(resizeWidth, resizeHeight) {
         const { compType, width, height, data } = this;
-        if (compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+        if ((compType !== IMAGE_COMP_TYPE_GRAYSCALE) &&
+             (compType !== IMAGE_COMP_TYPE_RGBA)) {
             throw new Error("wrong image comp type:" + compType);
         }
-        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
+        const opts = { compType }
         const imageDataEx = new ImageDataEx(resizeWidth, resizeHeight, opts);
-        for (let ry = 0; ry < resizeHeight; ry++) {
-            const y = Math.floor(ry * height / resizeHeight);
-            for (let rx = 0; rx < resizeWidth; rx++) {
-                const x = Math.floor(rx * width / resizeWidth);
-                imageDataEx.data[rx + resizeWidth * ry] = data[x + width * y];
+        switch (compType) {
+        case IMAGE_COMP_TYPE_GRAYSCALE: {
+            for (let ry = 0; ry < resizeHeight; ry++) {
+                const y = Math.floor(ry * height / resizeHeight);
+                for (let rx = 0; rx < resizeWidth; rx++) {
+                    const x = Math.floor(rx * width / resizeWidth);
+                    const offset = x + width * y;
+                    const roffset = rx + resizeWidth * ry;
+                    imageDataEx.data[roffset] = data[offset];
+                }
             }
+        } break;
+        case IMAGE_COMP_TYPE_RGBA: {
+            for (let ry = 0; ry < resizeHeight; ry++) {
+                const y = Math.floor(ry * height / resizeHeight);
+                for (let rx = 0; rx < resizeWidth; rx++) {
+                    const x = Math.floor(rx * width / resizeWidth);
+                    let offset = (x + width * y) * 4;
+                    let roffset = (rx + resizeWidth * ry) * 4;
+                    imageDataEx.data[roffset++] = data[offset++];
+                    imageDataEx.data[roffset++] = data[offset++];
+                    imageDataEx.data[roffset++] = data[offset++];
+                    imageDataEx.data[roffset++] = data[offset++];
+                }
+            }
+        } break;
+        default:
+            throw new Error("wrong image comp type:" + compType);
         }
         Object.assign(this, imageDataEx);
     }
