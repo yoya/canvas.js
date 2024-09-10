@@ -45,6 +45,29 @@
           </span>
           <canvas id="kernelCanvas" width="64" height="64" class="borderRed" > no canvas </canvas>
         </div>
+
+        <div style="padding: 0.5em;">  </div>
+        <div class="controllerElement borderThin"  style="display:flex-column;">
+          <div>
+            guideLine:
+            <input type="checkbox" v-model="guideLine" @change="onInputImage"/>
+          </div>
+          <div>
+            <div>
+              guideGap;
+            </div>
+            <div>
+              <input type="range" v-model="guideGap" @input="onInputImage" min="1" max="12"/>
+              <input type="number" v-model="guideGap" @input="onInputImage" min="1" max="12"/>
+            </div>
+            <div>
+              guideColor:
+            </div>
+            <div>
+              <input type="color" v-model="guideColor" @change="onInputImage"/>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="container" style="display: flex;">
         <div class="borderGreen">
