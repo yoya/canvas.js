@@ -14,8 +14,8 @@ new Vue({
         kernelCanvas: document.getElementById("kernelCanvas"),
         image: new Image(),
         imageDataEx: null, // 後でこっちに移す
-        openCount: 1,
-        kernelWidth: 3,
+        openCount: "1",
+        kernelWidth: "7",
     },
     methods: {
         clamp(x, a, b) {
@@ -52,16 +52,19 @@ new Vue({
         },
         update: function() {
             const { openCanvas, image, imageDataEx } = this;
-            const { kernelCanvas, kernelWidth } = this;
+            const { kernelCanvas } = this;
+            const openCount = Number(this.openCount);
+            const kernelWidth = Number(this.kernelWidth);
             const { width, height } = imageDataEx;
-            const kernel = imageDataEx.makeKernel(IMAGE_KERNEL_TYPE_DISK, 3);
-            const ex = imageDataEx.openImageData(kernel, kernelWidth,
-                                                 Number(this.openCount));
+            const kernel = imageDataEx.makeKernel(IMAGE_KERNEL_TYPE_DISK, kernelWidth);
+            console.log({kernel});
+            const ex = imageDataEx.openImageData(kernel, kernelWidth, openCount);
             const imageData = ex.toImageData();
             const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             ctx.putImageData(imageData, 0, 0);
             // kernel描画
             const kernelImageDataEx = imageDataEx.getKernelImageData(kernel, kernelWidth);
+            console.log({kernelImageDataEx});
             kernelImageDataEx.resize(kernelCanvas.width, kernelCanvas.height);
             const kernelImageData = kernelImageDataEx.toImageData();
             const kernelCtx = kernelCanvas.getContext("2d", { willReadFrequently: true });

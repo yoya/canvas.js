@@ -194,7 +194,12 @@ export class ImageDataProc {
         const imageDataEx = new ImageDataEx(kernelWidth, kernelWidth, opts);
         const n = kernel.length;
         for (let i = 0; i < n; i++) {
-            imageDataEx.data[i] = (kernel[i] > 0.5)? 255: 0;
+            const v = 255
+            if (kernel[i] > 0.5) {
+                imageDataEx.data[i] = 255;
+            } else {
+                imageDataEx.data[i] = 0;
+            }
         }
         return imageDataEx;
     }
