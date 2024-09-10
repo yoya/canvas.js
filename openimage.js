@@ -10,8 +10,9 @@ import { ImageDataEx, ImageDataProc, IMAGE_COMP_TYPE_GRAYSCALE, IMAGE_KERNEL_TYP
 new Vue({
     el: '#app',
     data: {
-        openCanvas: document.getElementById("openCanvas"),
-        kernelCanvas: document.getElementById("kernelCanvas"),
+        openCanvas: null,
+        kernelCanvas: null,
+        previewImage: null,
         image: new Image(),
         imageDataEx: null, // 後でこっちに移す
         openCount: "1",
@@ -27,7 +28,9 @@ new Vue({
             let file = e.dataTransfer.files[0];
             let reader = new FileReader();
             reader.onload = (ee) => {
-                this.image.src = ee.target.result;
+                const src = ee.target.result;
+                this.image.src = src;
+                this.previewImage.src = src;
             }
             reader.readAsDataURL(file);
         },
@@ -74,8 +77,10 @@ new Vue({
     mounted : function() {
         this.openCanvas = document.getElementById("openCanvas");
         this.kernelCanvas = document.getElementById("kernelCanvas");
-        const image = this.image;
-        image.onload = this.onLoadImage;1
-        image.src = "img/rings_lg_orig.png";;
+        this.previewImage = document.getElementById("previewImage");
+        const src = "img/rings_lg_orig.png";
+        this.previewImage.src = src;
+        this.image.src = src;
+        this.image.onload = this.onLoadImage;
     },
 })
