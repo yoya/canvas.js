@@ -5,13 +5,15 @@
     <link rel="shortcut icon" href="">
     <title> openimage </title>
     <style>
-      .borderRed { border: thick solid #F66; }
-      .borderBlue { border: thick solid #48F; }
+      body { background-color: #EEE }
+      .borderRed { border: thick solid #F62; }
+      .borderGreen { border: thick solid #2D0; }
+      .borderBlue { border: thick solid #4AF; }
       .controllerElement { vertical-align: top }
     </style>
   </head>
   <body>
-    <div id="app" @dragover.prevent @drop.prevent="dropFile">
+    <div id="app" @dragover.prevent @drop.prevent="dropFile" width="100%" height="100%">
       <div id="controller" style="display: flex;">
         <div class="controllerElement">
           <div>
@@ -34,19 +36,18 @@
         <div style="padding: 0.5em;">  </div>
         <div class="controllerElement">
           <span style="vertical-align: top">
-            preview:
-          </span>
-          <img src="" id="previewImage" style="max-width: 200px; max-height:100px; background-color: black;"/>
-        </div>
-        <div class="controllerElement">
-          <span style="vertical-align: top">
             kernel:
           </span>
-          <canvas id="kernelCanvas" width="64" height="64" class="borderBlue" > no canvas </canvas>
+          <canvas id="kernelCanvas" width="64" height="64" class="borderRed" > no canvas </canvas>
         </div>
       </div>
-      <div id="canvasContainer">
-        <canvas id="openCanvas" width="512" height="512" class="borderRed" > no canvas </canvas>
+      <div id="container" style="display: flex;">
+        <div class="borderGreen">
+          <img src="" id="previewImage" style="background-color: black;"/>
+        </div>
+        <div id="canvasContainer" class="borderBlue" >
+          <canvas id="openCanvas" width="512" height="512"> no canvas </canvas>
+        </div>
       </div>
     </div>
     <!-- script src="https://unpkg.com/vue@2"> </script -->
