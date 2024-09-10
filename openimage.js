@@ -13,11 +13,15 @@ new Vue({
         openCanvas: null,
         kernelCanvas: null,
         previewImage: null,
-        image: new Image(),
-        imageDataEx: null, // 後でこっちに移す
+        image: new Image(),  // 元画像
+        imageDataEx: null,
+        openImageDataEx: null,
         openImage: true,
         openCount: "4",
         kernelWidth: "5",
+        guideLine: true,
+        guideGap: 8,
+        guideColor: "#FF0000",
     },
     methods: {
         clamp(x, a, b) {
@@ -63,6 +67,7 @@ new Vue({
             const kernel = imageDataEx.makeKernel(IMAGE_KERNEL_TYPE_DISK, kernelWidth);
             console.log({kernel});
             const ex = imageDataEx.openImageData(kernel, kernelWidth, openCount);
+            this.openImageDataEx = ex;
             const imageData = ex.toImageData();
             const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             ctx.putImageData(imageData, 0, 0);
@@ -74,10 +79,37 @@ new Vue({
             const kernelCtx = kernelCanvas.getContext("2d", { willReadFrequently: true });
             kernelCtx.putImageData(kernelImageData, 0, 0);
         },
+        drawGuideLine() {
+            const { openCanvas, openImageDataEx } = this;
+            const { width, height } = openImageDataEx;
+            const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
+            if (openImageDataEx) {
+                const imageData = openImageDataEx.toImageData();
+                ctx.putImageData(imageData, 0, 0);
+            }
+            const guideGap = Number(this.guideGap);
+            const { guideColor } = this;
+            ctx.strokeStyle = guideColor;
+            for (let x = 0; x < width ; x+= guideGap) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+            }
+            for (let y = 0; y < height ; y+= guideGap) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+            }
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+        },
         update: function() {
-            const { openImage } = this;
+            const { openImage, guideLine } = this;
             if (openImage) {
                 this.drawOpenImage();
+            } else {
+                this.openImageDataEx = null;
+            }
+            if (guideLine) {
+                this.drawGuideLine();
             }
         },
     },
