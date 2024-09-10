@@ -212,16 +212,20 @@ export class ImageDataProc {
         return kernel;
     }
     getKernelImageData(kernel, kernelWidth) {
-        const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
-        const imageDataEx = new ImageDataEx(kernelWidth, kernelWidth, opts);
+        const imageDataEx = new ImageDataEx(kernelWidth, kernelWidth);
         const n = kernel.length;
+        let j = 0;
         for (let i = 0; i < n; i++) {
-            const v = 255
             if (kernel[i] > 0.5) {
-                imageDataEx.data[i] = 255;
+                imageDataEx.data[j++] = 255;
+                imageDataEx.data[j++] = 255;
+                imageDataEx.data[j++] = 0;
             } else {
-                imageDataEx.data[i] = 0;
+                imageDataEx.data[j++] = 0;
+                imageDataEx.data[j++] = 64;
+                imageDataEx.data[j++] = 255;
             }
+            imageDataEx.data[j++] = 255;
         }
         return imageDataEx;
     }
