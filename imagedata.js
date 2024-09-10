@@ -148,7 +148,6 @@ export class ImageDataProc {
             for (let rx = 0; rx < resizeWidth; rx++) {
                 const x = Math.floor(rx * width / resizeWidth);
                 imageDataEx.data[rx + resizeWidth * ry] = data[x + width * y];
-                // imageDataEx.data[rx + resizeWidth * ry] = 127;
             }
         }
         Object.assign(this, imageDataEx);
