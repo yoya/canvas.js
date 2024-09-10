@@ -15,6 +15,7 @@ new Vue({
         previewImage: null,
         image: new Image(),
         imageDataEx: null, // 後でこっちに移す
+        openImage: true,
         openCount: "4",
         kernelWidth: "5",
     },
@@ -53,7 +54,7 @@ new Vue({
             this.onLoadImage();
             this.onInput(e);
         },
-        update: function() {
+        drawOpenImage() {
             const { openCanvas, image, imageDataEx } = this;
             const { kernelCanvas } = this;
             const openCount = Number(this.openCount);
@@ -72,6 +73,12 @@ new Vue({
             const kernelImageData = kernelImageDataEx.toImageData();
             const kernelCtx = kernelCanvas.getContext("2d", { willReadFrequently: true });
             kernelCtx.putImageData(kernelImageData, 0, 0);
+        },
+        update: function() {
+            const { openImage } = this;
+            if (openImage) {
+                this.drawOpenImage();
+            }
         },
     },
     mounted : function() {
