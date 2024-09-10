@@ -164,16 +164,30 @@ export class ImageDataProc {
         return imageData;
     }
     makeKernel(kernelType, kernelWidth) {
+        if (kernelWidth % 2 != 1) {
+            throw new Error("kernelWidth need be odd number:" + kernelWidth);
+        }
+        const kernel = new Float32Array(kernelWidth * kernelWidth);
         switch (kernelType) {
         case IMAGE_KERNEL_TYPE_DISK: {
-            const rho = 4.3;
-            const center = Math.floor((kernelWidth - 1) /  2);
-            //
+            const radius = (kernelWidth - 1) /  2;
+            const limit_2 = radius * radius;
+            let offset = 0;
+            for (let y = 0; y < kernelWidth; y++) {
+                for (let x = 0; x < kernelWidth; x++) {
+                    const d_2 = (x-radius)**2 + (y-radius)**2;
+                    if (d_2 <= limit_2*1.2) {
+                        kernel[offset] = 1;
+                    }
+                    offset++;
+                }
+            }
+        } break;
+        default: {
+            throw new Error("unknown kernelType:" + kernelType);
         } break;
         }
-        return [ 0, 1, 0,
-                 1, 1, 1,
-                 0, 1, 0 ];
+        return kernel;
     }
     getKernelImageData(kernel, kernelWidth) {
         const opts = { compType: IMAGE_COMP_TYPE_GRAYSCALE}
