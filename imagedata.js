@@ -338,7 +338,12 @@ export class  ImageDataEx extends ImageDataProc {
         this.height = height;
         opts = (opts === undefined)? {}: opts;
         this.opts = opts;
-        const compType = ("compType" in opts)? opts.compType: IMAGE_COMP_TYPE_RGBA;
+        let compType = IMAGE_COMP_TYPE_RGBA;
+        if (typeof opts === "number") {
+            compType = opts;
+        } else if ("compType" in opts) {
+            compType = opts.compType;
+        }
         this.compType = compType;
         // colorDepth;
         switch (compType) {
