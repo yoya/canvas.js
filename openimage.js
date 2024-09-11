@@ -131,7 +131,7 @@ new Vue({
         this.openCanvas = document.getElementById("openCanvas");
         this.kernelCanvas = document.getElementById("kernelCanvas");
         this.previewImage = document.getElementById("previewImage");
-        const src = "img/rings_lg_orig-alpha.png";
+        const src = "img/rings_lg_orig-alpha-500x500.png";
         this.previewImage.src = src;
         this.image.src = src;
         this.image.onload = this.onLoadImage;
