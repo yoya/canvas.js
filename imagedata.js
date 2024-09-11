@@ -1,9 +1,9 @@
 export const IMAGE_COMP_TYPE_GRAYSCALE = 1;
 const IMAGE_COMP_TYPE_RGBA = 4;
 
-const IMAGE_COMP_IDX_RED = 0;
-const IMAGE_COMP_IDX_GREEN = 1;
-const IMAGE_COMP_IDX_BLUE = 2;
+export const IMAGE_COMP_IDX_RED = 0;
+export const IMAGE_COMP_IDX_GREEN = 1;
+export const IMAGE_COMP_IDX_BLUE = 2;
 export const IMAGE_COMP_IDX_ALPHA = 3;
 
 export const IMAGE_KERNEL_TYPE_DISK = 1
