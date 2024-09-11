@@ -16,8 +16,12 @@
   <body>
     <div id="app" @dragover.prevent @drop.prevent="dropFile" style="width:100%; height:100%">
       <div id="controller" style="display: flex;">
-        <div class="controllerElement borderThin"  style="display:flex-column;">
-          <div>
+        <div class="controllerElement borderThin"  style="display:flex-column;">          <div>
+            openAlpha:
+            <input type="checkbox" v-model="openAlpha" @change="onInputImage"/>
+          </div>
+        </div>
+        <div class="controllerElement borderThin"  style="display:flex-column;">          <div>
             openImage:
             <input type="checkbox" v-model="openImage" @change="onInputImage"/>
           </div>

@@ -3,7 +3,11 @@
  * (c) 2024/09/08- yoya@awm.jp . All Rights Reserved.
  */
 
-import { ImageDataEx, ImageDataProc, IMAGE_COMP_TYPE_GRAYSCALE, IMAGE_KERNEL_TYPE_DISK } from './imagedata.js';
+import { ImageDataEx, ImageDataProc } from './imagedata.js';
+
+import { IMAGE_COMP_TYPE_GRAYSCALE } from './imagedata.js';
+import {  IMAGE_KERNEL_TYPE_DISK } from './imagedata.js';
+import { IMAGE_COMP_IDX_RED, IMAGE_COMP_IDX_GREEN, IMAGE_COMP_IDX_BLUE, IMAGE_COMP_IDX_ALPHA } from './imagedata.js';
 
 // ImageDataProc 要らないかも？
 
@@ -14,8 +18,10 @@ new Vue({
         kernelCanvas: null,
         previewImage: null,
         image: new Image(),  // 元画像
-        imageDataEx: null,
+        imageData: null,
         openImageDataEx: null,
+        //
+        openAlpha: true,
         openImage: true,
         openCount: "2",
         kernelWidth: "5",
@@ -46,9 +52,7 @@ new Vue({
             openCanvas.height = height;
             const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
             ctx.drawImage(image, 0, 0, width, height);
-            const imageData = ctx.getImageData(0, 0, width, height);
-            const imageDataEx = new ImageDataEx(imageData).grayscale();
-            this.imageDataEx = imageDataEx;
+            this.imageData = ctx.getImageData(0, 0, width, height);
             this.update();
         },
         onInput(e) {
@@ -59,18 +63,27 @@ new Vue({
             this.onInput(e);
         },
         drawOpenImage() {
-            const { openCanvas, image, imageDataEx } = this;
+            const { openCanvas, image, imageData } = this;
             const { kernelCanvas } = this;
+            const { openAlpha } = this;
             const openCount = Number(this.openCount);
             const kernelWidth = Number(this.kernelWidth);
-            const { width, height } = imageDataEx;
+            const { width, height } = imageData;
+            const imageDataEx = new ImageDataEx(imageData);
             const kernel = imageDataEx.makeKernel(IMAGE_KERNEL_TYPE_DISK, kernelWidth);
-            console.log({kernel});
-            const ex = imageDataEx.openImageData(kernel, kernelWidth, openCount);
-            this.openImageDataEx = ex;
-            const imageData = ex.toImageData();
+            if (openAlpha) {
+                const alpha = imageDataEx.getPlaneData(IMAGE_COMP_IDX_ALPHA);
+                const openedAlpha = alpha.openImageData(kernel, kernelWidth, openCount);
+                // imageDataEx.putPlaneData(IMAGE_COMP_IDX_ALPHA, openedAlpha);
+                // this.openImageDataEx = imageDataEx;
+                this.openImageDataEx = openedAlpha;
+            } else {
+                imageDataEx.grayscale();
+                const ex = imageDataEx.openImageData(kernel, kernelWidth, openCount);
+                this.openImageDataEx = ex;
+            }
             const ctx = openCanvas.getContext("2d", { willReadFrequently: true });
-            ctx.putImageData(imageData, 0, 0);
+            ctx.putImageData(this.openImageDataEx.toImageData(), 0, 0);
             // kernel描画
             const kernelImageDataEx = imageDataEx.getKernelImageData(kernel, kernelWidth);
             console.log({kernelImageDataEx});
