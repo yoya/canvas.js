@@ -365,7 +365,7 @@ export class  ImageDataEx extends ImageDataProc {
         } break;
         }
     }
-    grayscale() {
+    grayscale(opts) {
         const { compType, data, width, height } = this;
         if (compType === IMAGE_COMP_TYPE_GRAYSCALE) {
             console.warn("already grayscale image");
@@ -376,9 +376,16 @@ export class  ImageDataEx extends ImageDataProc {
         }
         const n = width * height;
         this.data = new Uint8ClampedArray(n);
-        for (let i=0, j=0; i < n; i++, j+=4) {
-            const v = (2*data[j] + 5*data[j+1] + data[j+2]) / 8;
-            this.data[i] = v;
+        if (opts && opts.applyAlpha) {
+            for (let i=0, j=0; i < n; i++, j+=4) {
+                const v = (2*data[j] + 5*data[j+1] + data[j+2]) / 8;
+                this.data[i] = v * data[j+3] / 255;
+            }
+        } else {
+            for (let i=0, j=0; i < n; i++, j+=4) {
+                const v = (2*data[j] + 5*data[j+1] + data[j+2]) / 8;
+                this.data[i] = v;
+            }
         }
         this.compType = IMAGE_COMP_TYPE_GRAYSCALE;
         return this;
