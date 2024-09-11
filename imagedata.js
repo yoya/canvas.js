@@ -11,17 +11,27 @@ export const IMAGE_KERNEL_TYPE_DISK = 1
 export class ImageDataProc {
     constructor() { ; }
     getPlaneData(compIdx) {
-        if (this.compType !== IMAGE_COMP_TYPE_GRAYSCALE) {
+        if (this.compType !== IMAGE_COMP_TYPE_RGBA) {
             throw new Error("wrong image comp type:" + this.compType);
         }
         const { width, height, data } = this;
-        const alphaImageData = new ImageDataEx(width, height, IMAGE_COMP_TYPE_GRAYSCALE);
-        const d = alphaImageData.data;
+        const planeImageData = new ImageDataEx(width, height, IMAGE_COMP_TYPE_GRAYSCALE);
+        const d = planeImageData.data;
         const len = data.length;
         for (let i = 0, j = compIdx; i < len; i++, j+=4) {
             d[i] = data[j];
         }
-        return alphaImageData;
+        return planeImageData;
+    }
+    putPlaneData(compIdx, planeData) {
+        if (this.compType !== IMAGE_COMP_TYPE_RGBA) {
+            throw new Error("wrong image comp type:" + this.compType);
+        }
+        const { width, height, data } = this;
+        const len = data.length;
+        for (let i = 0, j = compIdx; i < len; i++, j+=4) {
+            data[j] = planeData[i];
+        }
     }
     cropImageData(x, y, w, h) {
         const { width, height, data } = this;
