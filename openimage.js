@@ -78,7 +78,8 @@ new Vue({
                 // this.openImageDataEx = imageDataEx;
                 this.openImageDataEx = openedAlpha;
             } else {
-                imageDataEx.grayscale();
+                const opts = { applyAlpha: true };
+                imageDataEx.grayscale(opts);
                 const ex = imageDataEx.openImageData(kernel, kernelWidth, openCount);
                 this.openImageDataEx = ex;
             }
