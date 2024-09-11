@@ -1,5 +1,5 @@
 export const IMAGE_COMP_TYPE_GRAYSCALE = 1;
-const IMAGE_COMP_TYPE_RGBA = 4;
+export const IMAGE_COMP_TYPE_RGBA = 4;
 
 export const IMAGE_COMP_IDX_RED = 0;
 export const IMAGE_COMP_IDX_GREEN = 1;
