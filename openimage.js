@@ -23,8 +23,8 @@ new Vue({
         //
         openAlpha: true,
         openImage: true,
-        openCount: "2",
-        kernelWidth: "5",
+        openCount: "1",
+        kernelWidth: "9",
         guideLine: true,
         guideGap: "8",
         guideColor: "#FF0000",
